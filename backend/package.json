@@ -16,7 +16,7 @@
     "cloudinary": "^2.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "formidable": "^2.1.1",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
