@@ -545,7 +545,7 @@ export const Discussion = () => {
 
         <div className="mt-4">
           <Carousel
-            className="rounded-xl"
+            className="rounded-xl items-center"
             prevArrow={({ handlePrev }) => (
               <IconButton
                 variant="text"
@@ -602,7 +602,7 @@ export const Discussion = () => {
                   key={index}
                   src={img}
                   alt="Post"
-                  className="h-full w-full object-cover shadow-lg"
+                  className="shadow-lg w-full object-cover h-full"
                 />
               ))}
           </Carousel>
