@@ -29,20 +29,15 @@ import { useSocket } from "../context/SocketProvider";
 const NAV_MENU = [
   {
     name: "Home",
-    icon: HomeIcon,
     url: "/home",
-  },
-  {
-    name: "Pages",
-    icon: RectangleStackIcon,
   },
 ];
 
-const NavItem = forwardRef(({ children, onClick, href }, ref) => (
+const NavItem = forwardRef(({ children, onClick, href, className }, ref) => (
   <Typography
     variant="paragraph"
     color="gray"
-    className="flex items-center gap-2 font-medium text-gray-900 cursor-pointer"
+    className={`flex items-center gap-2 font-medium text-gray-900 cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis ${className}`}
     onClick={onClick}
     ref={ref}
   >
@@ -143,7 +138,7 @@ export const Appbar = () => {
     setSelectedChat,
     messageNotification,
     setMessageNotification,
-    setIsLoggedIn,
+    // setIsLoggedIn,
     setNotification,
     notification,
   } = ChatState();
@@ -234,68 +229,57 @@ export const Appbar = () => {
   });
 
   return (
-    <MTNavbar shadow={false} fullWidth className="border-0 sticky top-0 z-50">
+    <MTNavbar
+      shadow={false}
+      fullWidth
+      className="border-0 sticky top-0 z-50 bg-white/80 backdrop-blur-md backdrop-saturate-200"
+    >
       <div className="relative container mx-auto flex items-center justify-between">
         <div className="flex-1">
           <Typography
             component={Link}
             onClick={() => navigate("/")}
             color="blue-gray"
-            className="text-lg font-bold cursor-pointer"
+            className="text-xl font-bold cursor-pointer hover:text-primary transition-colors"
           >
             WortyF
           </Typography>
         </div>
 
-        <ul className="flex-1 hidden items-center gap-8 lg:flex w-full justify-center">
-          {NAV_MENU.map(({ name, icon: Icon, url }) =>
-            name === "Pages" ? (
-              <Menu
-                key={name}
-                open={openPagesMenu}
-                handler={setOpenPagesMenu}
-                placement="bottom"
-                offset={10}
-              >
-                <MenuHandler>
-                  <NavItem onClick={() => setOpenPagesMenu((prev) => !prev)}>
-                    <Icon className="h-5 w-5" />
-                    {name}
-                  </NavItem>
-                </MenuHandler>
-                <MenuList className="z-50">
-                  {getPagesForRole().map((page) => (
-                    <MenuItem
-                      key={page.name}
-                      onClick={() => {
-                        navigate(`/${page.URL}`);
-                        setOpenPagesMenu(false);
-                      }}
-                    >
-                      {page.name}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            ) : (
-              <NavItem key={name} onClick={() => navigate(url)}>
-                <Icon className="h-5 w-5" />
-                {name}
-              </NavItem>
-            )
-          )}
+        <ul className="flex-1 hidden items-center gap-6 lg:flex w-full justify-center">
+          {NAV_MENU.map(({ name, url }) => (
+            <NavItem
+              key={name}
+              onClick={() => navigate(url)}
+              className="hover:text-primary transition-all duration-300 px-3 py-1 rounded-full hover:bg-gray-100"
+            >
+              {name}
+            </NavItem>
+          ))}
+          {getPagesForRole().map(({ name, URL }) => (
+            <NavItem
+              key={name}
+              onClick={() => navigate(`/${URL}`)}
+              className="hover:text-primary transition-all duration-300 px-3 py-1 rounded-full hover:bg-gray-100"
+            >
+              {name}
+            </NavItem>
+          ))}
         </ul>
 
-        <div className="flex-1 hidden items-center gap-2 lg:flex justify-end">
+        <div className="flex-1 hidden items-center gap-4 lg:flex justify-end">
           {!user && (
             <>
-              <Button variant="text" onClick={() => navigate(`/sign-in`)}>
+              <Button
+                variant="text"
+                onClick={() => navigate(`/sign-in`)}
+                className="hover:bg-gray-100 transition-all duration-300"
+              >
                 Sign In
               </Button>
 
               <Button
-                color="gray"
-                className="bg-primary"
+                className="bg-primary hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 onClick={() => navigate(`/sign-up`)}
               >
                 Sign Up
@@ -304,13 +288,13 @@ export const Appbar = () => {
           )}
 
           {user && (
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-4 items-center">
               {/* MESSAGE */}
               <div class="relative inline-block">
                 <IconButton
                   variant="text"
                   data-popover-target="notifications-menu"
-                  class="rounded-md border border-transparent p-2.5 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  class="rounded-full hover:bg-gray-100 transition-all duration-300"
                   type="button"
                   onClick={handleOpenMessage}
                 >
@@ -330,8 +314,8 @@ export const Appbar = () => {
                   </svg>
                 </IconButton>
                 {messageNotification && messageNotification.length > 0 && (
-                  <span class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-red-600 py-1 px-1 text-xs text-white">
-                    {messageNotification && messageNotification.length}
+                  <span class="absolute -top-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-red-500 text-xs text-white shadow-md">
+                    {messageNotification.length}
                   </span>
                 )}
                 <ul
@@ -367,7 +351,7 @@ export const Appbar = () => {
                           class="relative inline-block h-10 w-10 rounded-full object-cover object-center"
                         />
                         <div class="flex flex-col gap-1 ml-4">
-                          <p class="text-slate-800 font-medium text-black">
+                          <p class="text-slate-800 font-medium text-black truncate max-w-[200px]">
                             {message.chat.isGroupChat
                               ? `${message.sender.username} sent a message to ${message.chat.chatName}`
                               : `${message.sender.username} sent you a message`}
@@ -410,7 +394,7 @@ export const Appbar = () => {
                 <IconButton
                   variant="text"
                   data-popover-target="notifications-menu"
-                  class="rounded-md border border-transparent p-2.5 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  class="rounded-full hover:bg-gray-100 transition-all duration-300"
                   type="button"
                   onClick={handleOpenNotification}
                 >
@@ -430,7 +414,7 @@ export const Appbar = () => {
                   </svg>
                 </IconButton>
                 {notification && notificationLength(notification) > 0 && (
-                  <span class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-red-600 py-1 px-1 text-xs text-white">
+                  <span class="absolute -top-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-red-500 text-xs text-white shadow-md">
                     {notification && notificationLength(notification)}
                   </span>
                 )}
@@ -468,7 +452,7 @@ export const Appbar = () => {
                           class="relative inline-block h-10 w-10 rounded-full object-cover object-center"
                         />
                         <div class="flex flex-col gap-1 ml-4">
-                          <p class="text-slate-800 font-medium text-black">
+                          <p class="text-slate-800 font-medium text-black truncate max-w-[200px]">
                             {noti.type === "comment" &&
                               `${noti.senderId.username} commented at your post`}
                             {noti.type === "approvedPost" &&
@@ -522,7 +506,7 @@ export const Appbar = () => {
           variant="text"
           color="gray"
           onClick={handleOpen}
-          className="ml-auto inline-block lg:hidden"
+          className="ml-auto inline-block lg:hidden hover:bg-gray-100 transition-all duration-300 rounded-full"
         >
           {open ? (
             <XMarkIcon strokeWidth={2} className="h-6 w-6" />
@@ -535,42 +519,16 @@ export const Appbar = () => {
       <Collapse open={open}>
         <div className="container mx-auto mt-3 border-t border-gray-200 px-2 pt-4">
           <ul className="flex flex-col gap-4">
-            {NAV_MENU.map(({ name, icon: Icon, url }) =>
-              name === "Pages" ? (
-                <Menu
-                  key={name}
-                  open={openPagesMenuMobile}
-                  handler={setOpenPagesMenuMobile}
-                  placement="bottom-start"
-                  offset={10}
-                >
-                  <MenuHandler>
-                    <NavItem onClick={() => setOpenPagesMenu((prev) => !prev)}>
-                      <Icon className="h-5 w-5" />
-                      {name}
-                    </NavItem>
-                  </MenuHandler>
-                  <MenuList className="z-50">
-                    {getPagesForRole().map((page) => (
-                      <MenuItem
-                        key={page.name}
-                        onClick={() => {
-                          navigate(`/${page.URL}`);
-                          setOpenPagesMenu(false);
-                        }}
-                      >
-                        {page.name}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Menu>
-              ) : (
-                <NavItem key={name} onClick={() => navigate(url)}>
-                  <Icon className="h-5 w-5" />
-                  {name}
-                </NavItem>
-              )
-            )}
+            {NAV_MENU.map(({ name, url }) => (
+              <NavItem key={name} onClick={() => navigate(url)}>
+                {name}
+              </NavItem>
+            ))}
+            {getPagesForRole().map(({ name, URL }) => (
+              <NavItem key={name} onClick={() => navigate(`/${URL}`)}>
+                {name}
+              </NavItem>
+            ))}
           </ul>
           <div className="mt-6 mb-4 flex items-center gap-2">
             <Button variant="text" onClick={() => navigate(`/sign-in`)}>
